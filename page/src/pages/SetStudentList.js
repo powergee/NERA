@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Paper, Button, Typography } from '@material-ui/core';
-import { PageInfo } from '../components';
+import { PageInfo, StudentPopup } from '../components';
+
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import XLSX from 'xlsx';
-import './pages.css';
 
+import { Grid, Paper, Button, Typography } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ClearIcon from '@material-ui/icons/Clear';
-import StudentPopup from '../shared/StudentPopup';
 
 function SetStudentList(props){
     const [update, forceUpdate] = useState(false); // rendering update용
@@ -57,7 +56,9 @@ function SetStudentList(props){
                 alert(`수강생 정보를 얻는데 실패하였습니다. 잘못된 요청입니다. (${status})`);
             }
             else if (status === 401) {
-                alert(`수강생 정보를 얻는데 실패하였습니다. 인증이 실패하였습니다. (${status})`);
+                alert(`토큰이 유효하지 않습니다. (${status})`);
+                document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                history.push("/");
             }
             else if (status === 403) {
                 alert(`수강생 정보를 얻는데 실패하였습니다. 권한이 없습니다. (${status})`);
@@ -93,7 +94,9 @@ function SetStudentList(props){
                 alert(`수강생 정보를 저장하는데 실패하였습니다. 잘못된 요청입니다. (${status})`);
             }
             else if (status === 401) {
-                alert(`수강생 정보를 저장하는데 실패하였습니다. 인증이 실패하였습니다. (${status})`);
+                alert(`토큰이 유효하지 않습니다. (${status})`);
+                document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                history.push("/");
             }
             else if (status === 403) {
                 alert(`수강생 정보를 저장하는데 실패하였습니다. 권한이 없습니다. (${status})`);
@@ -119,7 +122,7 @@ function SetStudentList(props){
     async function deleteGroup(index){
         // 그룹 삭제
         const string = "그룹 \""+group[index].className+"\" 을(를) 정말로 삭제할까요?";
-        if(window.confirm(string)==false){
+        if(window.confirm(string)===false){
             return;
         }
         await axios
@@ -133,7 +136,9 @@ function SetStudentList(props){
             }
             const status = err.response.status;
             if (status === 401) {
-                alert(`수강생 정보를 삭제하는데 실패하였습니다. 인증이 실패하였습니다. (${status})`);
+                alert(`토큰이 유효하지 않습니다. (${status})`);
+                document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                history.push("/");
             }
             else if (status === 403) {
                 alert(`수강생 정보를 삭제하는데 실패하였습니다. 권한이 없습니다. (${status})`);
@@ -197,7 +202,7 @@ function SetStudentList(props){
                 <Grid className="contents_title"><h6>수강생 목록</h6></Grid>
                 <Grid container wrap="wrap" alignItems="center" className="contents box_layout" >
                 {
-                    group.length==0?
+                    group.length===0?
                     <Grid item>
                         <Typography variant="h6">수강생 목록이 없습니다. 생성해주세요!</Typography>
                     </Grid>

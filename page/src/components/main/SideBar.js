@@ -1,18 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
-import "./components.css";
-import {useAssignmentState} from '../shared/AssignmentState';
-
-import { Divider, ListSubheader, Grid, Button } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import List from '@material-ui/core/List';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { useAssignmentState } from '../../function/AssignmentState';
+
+import { Divider, ListSubheader, Grid, Button, List, ListItem, ListItemText } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
+import { makeStyles } from '@material-ui/core/styles';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 const useStyles = makeStyles((theme) => ({
     drawerHeader: {
@@ -56,9 +52,7 @@ const SideBar = (props) => {
 
     function getProfessorMenu(type){
         let result = [];
-        console.log(assignmentClass);
         assignmentClass[type].map((as)=>{
-            console.log(as);
             result.push(
                 <Link to={'/home/assignment/'+as[0]}>
                     <ListItem button className="side_bar_list_item">
@@ -76,7 +70,6 @@ const SideBar = (props) => {
                 </Link>
             );
         });
-        console.log(result);
         return result;
     }
     function getStudentMenu(type){

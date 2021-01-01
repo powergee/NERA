@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Modal from '@material-ui/core/Modal';
-import { Grid, Paper, TextField, Button} from '@material-ui/core';
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import XLSX from 'xlsx';
 import PropTypes from 'prop-types';
-import ClearIcon from '@material-ui/icons/Clear';
 
-import '../pages/pages.css';
-import './shared.css'; //shared.css로 옮기기
+import { Grid, Modal, Paper, TextField, Button} from '@material-ui/core';
+import ClearIcon from '@material-ui/icons/Clear';
 
 function StudentPopUp (props){
     const [update, forceUpdate] = useState(false); // rendering update용
@@ -193,10 +190,9 @@ function StudentPopUp (props){
     async function saveStudentList(){
         await initializeHighlight();
         
-        const errMessage = await preProcessingStudentData();
-        console.log(errMessage);
-        if(errMessage!==""){
-            alert(errMessage);
+        const errorMessage = await preProcessingStudentData();
+        if(errorMessage!==""){
+            alert(errorMessage);
             return;
         }
 
@@ -207,7 +203,7 @@ function StudentPopUp (props){
         if (f === undefined) return;
         const check = f.name.slice(f.name.indexOf(".") + 1).toLowerCase();
 
-        if (check != 'csv' && check != 'xlsx') {
+        if (check !== 'csv' && check !== 'xlsx') {
             alert('.csv, .xlsx 파일만 등록 가능합니다.');
             return;
         }
@@ -234,7 +230,7 @@ function StudentPopUp (props){
     // type마다 달라지는 contents
     
     const headerContent = ()=>{
-        if(props.type=="set"){
+        if(props.type==="set"){
             // 수강생 목록 생성
             return(
                 <Grid container item alignItems="center">
@@ -243,11 +239,10 @@ function StudentPopUp (props){
                     <Button className="save_button" onClick={saveStudentList}>저장</Button>
                 </Grid>
             );
-        }else if(props.type=="get"){
+        }else if(props.type==="get"){
             // 수강생 목록 조회
             return(
                 <Grid container item alignItems="center">
-                    <TextField label="목록 이름" required onInput={(e)=>setListName(e.target.value)} rows={1} className="modal_input_field" value={listName}></TextField>
                     <Button onClick={getStudentList}>수강생 목록 불러오기</Button>
                     {renderStudentList()}
                     <Button className="save_button" onClick={saveStudentList}>저장</Button>
@@ -273,6 +268,7 @@ function StudentPopUp (props){
                                 <Grid item className="box_container">
                                     <Grid item className="box_content">
                                         <TextField  label={"학생"+(index+1)} 
+                                                    InputLabelProps={{ shrink: true }}
                                                     rows={1}
                                                     onInput={(e)=>changeStudent(e, index)} 
                                                     className={"modal_students modal_input_field"}

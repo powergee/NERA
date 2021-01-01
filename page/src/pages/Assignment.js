@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { PageInfo, Problem, Loading, MarkdownViewer, MarkdownEditor, SaveSnackbar } from "../components";
-import { modifiedDateToString } from '../shared/DateToString.js';
+import { modifiedDateToString } from '../function/DateToString.js';
+
+import axios from "axios";
+import { useHistory } from "react-router-dom";
+import { Prompt } from 'react-router';
+
 import MuiAlert from '@material-ui/lab/Alert';
 import InfoIcon from '@material-ui/icons/Info';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import { Button, Grid, Typography, Divider, Snackbar, Slide } from '@material-ui/core';
-import axios from "axios";
-import { useHistory } from "react-router-dom";
-import { Prompt } from 'react-router';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -83,6 +85,8 @@ const Assignment = (props) => {
                     alert(`과제 정보를 얻는데 실패하였습니다. 잘못된 요청입니다. (${status})`);
                 }
                 else if (status === 401) {
+                    alert(`토큰이 유효하지 않습니다. (${status})`);
+                    document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
                     history.push("/");
                 }
                 else if (status === 404) {
@@ -116,7 +120,9 @@ const Assignment = (props) => {
                     alert(`답안 정보를 얻는데 실패하였습니다. 잘못된 요청입니다. (${status})`);
                 }
                 else if (status === 401) {
-                    alert(`답안 정보를 얻는데 실패하였습니다. 인증이 실패하였습니다. (${status})`);
+                    alert(`토큰이 유효하지 않습니다. (${status})`);
+                    document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                    history.push("/");
                 }
                 else if (status === 403) {
                     alert(`답안 정보를 얻는데 실패하였습니다. 권한이 없습니다. (${status})`);
@@ -141,7 +147,7 @@ const Assignment = (props) => {
     }
 
     function getMarkedScore(qId) {
-        let found = answers.filter(answer => answer.questionId == qId);
+        let found = answers.filter(answer => answer.questionId === qId);
         if (found.length > 0) {
             if (found[0].score === -1)
                 return 0;
@@ -167,7 +173,7 @@ const Assignment = (props) => {
                 processed.score = getMarkedScore(ques.questionId);
                 processed.assignmentState = info.assignmentState;
 
-                const found = answers.filter(answer => answer.questionId == ques.questionId);
+                const found = answers.filter(answer => answer.questionId === ques.questionId);
                 if (found.length > 0)
                     processed.answerContent = found[0].answerContent;
                 else
@@ -187,7 +193,7 @@ const Assignment = (props) => {
         currModified[qId] = text;
         setModifiedAnswers(currModified);
         
-        let found = questions.find(ques => ques.questionId == qId);
+        let found = questions.find(ques => ques.questionId === qId);
         if (status !== "답안 저장 필요") {
             setStatusStyle({ ...statusCaptionStyle, color: "red" });
             setStatus("답안 저장 필요");
@@ -230,7 +236,9 @@ const Assignment = (props) => {
                     alert(`답안을 저장하지 못했습니다. 잘못된 요청입니다. (${status})`);
                 }
                 else if (status === 401) {
-                    alert(`답안을 저장하지 못했습니다. 인증이 실패하였습니다. (${status})`);
+                    alert(`토큰이 유효하지 않습니다. (${status})`);
+                    document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                    history.push("/");
                 }
                 else if (status === 403) {
                     alert(`답안을 저장하지 못했습니다. 권한이 없습니다. (${status})`);
@@ -276,7 +284,7 @@ const Assignment = (props) => {
         if (info.assignmentState !== 1)
             return;
 
-        if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey)  && event.keyCode == 83) {
+        if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey)  && event.keyCode === 83) {
             setOpenSnack(true);
             saveAnswers();
             event.preventDefault();
